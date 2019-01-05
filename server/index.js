@@ -3,8 +3,8 @@ const express = require("express"),
         mongoose = require("mongoose"),
         cors = require("cors"),
         helmet = require("helmet"),
-        moment = require("moment");
-const http = require("http")
+        moment = require("moment"),
+        http = require("http");
 
 const coinmarketcap = new ccxt.coinmarketcap()
 
@@ -26,25 +26,24 @@ app.use(helmet.contentSecurityPolicy({
 }))
 
 app.get("/", (request, response) => {
-    response.status(200).send({message:"The server works doe rwar"});
+    response.send({message:"The server works doe rwar"});
 });
 
 app.get("/api/crypto", (request, response) => {
     let date = moment().format("MM-DD-YYYY")
     const collection = db.collection("cryptocurrency-data");
-    collection.findOne({ date }, (error, result) => {
-        console.log(result)
-        if(!result) {
-            coinmarketcap.fetchCurrencies().then(res => {
+    coinmarketcap.fetchCurrencies().then(res => {
+        collection.findOne({ date }, (error, result) => {
+            if(!result) {
                 collection.insertOne({date, data: res})
-                response.status(200).send({date, data: res})
-            }).catch(error => {
-                response.status(404).send(error)
-            })
-        }
-        else {
-            response.status(200).send(result)
-        }
+                response.send({date, data: res})
+            }
+            else {
+                response.send(result)
+            }
+        })
+    }).catch(error => {
+        response.status(404).send(error)
     })
 });
 
