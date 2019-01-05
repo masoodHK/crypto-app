@@ -32,18 +32,21 @@ app.get("/", (request, response) => {
 app.get("/api/crypto", (request, response) => {
     let date = moment().format("MM-DD-YYYY")
     const collection = db.collection("cryptocurrency-data");
-    coinmarketcap.fetchCurrencies().then(res => {
-        collection.findOne({ date }, (error, result) => {
-            if(!result) {
+    collection.findOne({ date }, (error, result) => {
+        if (error) {
+            response.send(error)
+        }
+        if(!result) {
+            coinmarketcap.fetchCurrencies().then(res => {
                 collection.insertOne({date, data: res})
                 response.send({date, data: res})
-            }
-            else {
-                response.send(result)
-            }
-        })
-    }).catch(error => {
-        response.status(404).send(error)
+            }).catch(error => {
+                response.status(404).send(error)
+            })
+        }
+        else {
+            response.send(result)
+        }
     })
 });
 
