@@ -50,4 +50,13 @@ app.get("/api/crypto", (request, response) => {
     })
 });
 
-http.createServer(app).listen(port, ip, () => console.log(`Server Started at http://${ip}:${port}`))
+app.get("/api/market", (request, response) => {
+    coinmarketcap.loadMarkets().then(res => {
+        console.log(coinmarketcap.countries)
+        response.send({res})
+    }).catch(error => {
+        response.status(404).send(error)
+    })
+});
+
+http.createServer(app).listen(port, () => console.log(`Server Started at http://${ip}:${port}`))
