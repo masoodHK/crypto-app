@@ -14,7 +14,7 @@ export default class MainScreen extends React.Component {
 		currencies: []
 	}
 	componentDidMount = () => {
-		fetch("http://192.168.1.107:3000/api/crypto")
+		fetch("http://<YOUR-IP-ADDRESS>:3000/api/crypto")
 			.then(res => res.json())
 			.then(data => {
 				this.setState({
